@@ -30,19 +30,21 @@ If you find this repo helpful, please cite the following:
 
 ## Install Requirements
 
-tqdm,torch==1.6.0,transformers==3.2.0
-
 `pip install -r requirements.txt`
 
-## Prepare Datasets
+## Prepare Data
+This project currently only support ace2004 and ace2005 dataset.
 
+For data processing:
+1. We use moving sliding window with overlap to split the passage, 
+2. We use a threshold to filter impossible relations with small frequency, 
+3. We use max distance to further filter impossible relations that have end entity type that doesn't  in a small range from the head entity.
+4. We use two special tokens to mark the head entity in the context to avoid coreference problem in the window. 
 
-For data processing, we use moving sliding window with overlap to construct the context.
-
-Follow these steps to obtain training data.
+Following these steps to obtain training data:
 
 1. Unzip ace2004.zip and ace2005.zip into data/raw_data
-2. Preprocessing the data with `preprocess.py`, the example used can be found in `scripts/prepare_ace2005.sh`
+2. Preprocess the data with `preprocess.py`.The example used can be found in `scripts/prepare_ace2005.sh`
 
 ## Pretrained Model
 
@@ -50,18 +52,12 @@ We use [BERT-Base-Uncased](https://huggingface.co/bert-base-uncased)
 
 ## Train
 
-Use `train.py`, following the example of `scripts/train_ace2005.sh`
+Use `train.py` to train the model. 
 
-## Evaluate
+The example used can be found in `scripts/train_ace2005.sh`.
 
-### Evaluation during training
-
-In `train.py`, there are two parameters for evaluation: `--eval` and `--test_eval`
-
-`--eval`: Evaluate Multi-turn QAs under gold entities as  universal NER task. The evaluated data is in the same format as the training data. If the sliding windows overlap, the results may be biased.
-
-`--test_eval`: First evaluate the first turn of QA, and then construct the second turn of question and answer data based on the results of the first turn of QA to evaluate the second turn of QA. It will eliminate duplicate predictions caused by overlapping sliding windows.
-
-### Evaluate the saved model:
+## Evaluate checkpoints:
 
 Use `ckpt_eval.py` to evaluate the saved model.
+
+The example used can be found in `scripts/ckpt_eval.sh`.
